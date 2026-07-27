@@ -6,7 +6,7 @@ DIR="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="${1:-$DIR/shots}"
 mkdir -p "$OUT"
 CHROME="${CHROME:-chromium}"
-SHOTS=(title serve action burst multiball laser level4 clear)
+SHOTS=(title serve action burst multiball laser level4 clear hero)
 for s in "${SHOTS[@]}"; do
   "$CHROME" --headless=new --disable-gpu --hide-scrollbars \
     --force-device-scale-factor=2 --window-size=1280,720 \

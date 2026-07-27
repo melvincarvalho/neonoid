@@ -1111,6 +1111,11 @@ function runShot(name) {
     G.level = 4; buildLevel(4); G.balls = []; spawnBall(true);
     stepUntil(() => G.bricksBroken >= 4, 120 * 90);
     stepFor(0.04);
+  } else if (name === 'hero') {
+    // README hero: real action, but captured after the shake settles so the frame is level
+    G.level = 4; buildLevel(4); G.balls = []; spawnBall(true);
+    stepUntil(() => G.bricksBroken >= 6, 120 * 90);
+    stepUntil(() => G.shake < 1.5, 120 * 2);
   } else if (name === 'clear') {
     for (const br of G.bricks) if (br.type !== GOLD) br.alive = false;
     G.bricks = G.bricks.filter(b => b.alive);

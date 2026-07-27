@@ -8,7 +8,7 @@ prompt; the original aimed at Call of Duty and lost every blind comparison.)
 
 **Play it: <https://melvincarvalho.github.io/neonoid/>**
 
-![NEONOID gameplay — sector 4, mid-explosion](shots/level4.png)
+![NEONOID gameplay — sector 4, combo ×5](shots/hero.png)
 
 **There are no assets.** Every pixel is canvas-drawn and every sound is Web Audio
 synthesis. Two files: `index.html`, `game.js` (~1,000 lines). The only tool is a
