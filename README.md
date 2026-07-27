@@ -81,3 +81,10 @@ What still loses the blind A/B, per the final panel:
    the multiplier on score popups) was better than either demand.
 4. **Sequential single-owner passes** held up: no round ever broke a previous round's
    wins, which the original repo could not say about its parallel fan-out rounds.
+
+## License
+
+Copyright © 2026 Melvin Carvalho.
+
+Licensed under the [GNU Affero General Public License v3.0 or later](LICENSE)
+(AGPL-3.0-or-later).

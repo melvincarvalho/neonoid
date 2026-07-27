@@ -1,5 +1,6 @@
 'use strict';
-// NEONOID — a single-file Arkanoid. No assets: all visuals canvas-drawn, all audio synthesized.
+// NEONOID — Copyright © 2026 Melvin Carvalho — AGPL-3.0-or-later (see LICENSE)
+// A single-file Arkanoid. No assets: all visuals canvas-drawn, all audio synthesized.
 // ?shot=<name> renders a deterministic frame for the critic harness (see tools/capture.sh).
 
 const W = 1280, H = 720;
