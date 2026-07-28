@@ -1,11 +1,8 @@
 # The prompt
 
-This repository is a test of the [Claude-of-Duty](https://github.com/mshumer/Claude-of-Duty)
-prompt pattern on a target where the quality bar is actually reachable. The original
-prompt asked for a Call of Duty-grade FPS; its own README admits every blind critic
-picked the real game. We adapted the prompt using that repo's two process lessons:
-sequential single-owner passes beat parallel fan-out, and critics must review
-reproducible captures.
+This repository is an experiment in prompt-driven game development: build the
+game once, then loop harsh sub-agent critics against reproducible screenshots
+until the score stops improving. This is the prompt that produced it.
 
 ```
 Build an Arkanoid/Breakout at the level of a modern commercial arcade remake

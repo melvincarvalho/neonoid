@@ -1,10 +1,9 @@
 # NEONOID
 
-A single-page Arkanoid tribute built as an experiment: does the
-[Claude-of-Duty](https://github.com/mshumer/Claude-of-Duty) prompt pattern — build,
-then `/loop` harsh sub-agent critics against screenshots until they're satisfied —
-actually converge when the quality bar is reachable? (`prompt.md` has the adapted
-prompt; the original aimed at Call of Duty and lost every blind comparison.)
+A single-page Arkanoid tribute built as an experiment: build the game, then
+`/loop` harsh sub-agent critics against deterministic screenshots — scoring
+against a commercial bar every round — until the score plateaus. `prompt.md`
+has the prompt that produced it.
 
 **Play it: <https://melvincarvalho.github.io/neonoid/>**
 
@@ -29,16 +28,15 @@ scoring, silver two-hit and gold indestructible bricks.
 The harness (`tools/capture.sh`) renders 8 named, deterministic shots via headless
 Chromium — the game has a `?shot=` mode that steps a seeded simulation to a fixed
 event ("9 bricks broken", "2 laser hits") and draws exactly one frame. Screenshots
-are bit-reproducible, which the Claude-of-Duty README identifies as the precondition
-for critics being useful at all.
+are bit-reproducible — the precondition for critics being useful at all.
 
 Each round, three independent sub-agent critics with distinct lenses — composition/
 color, game-feel juice, HUD/typography — scored the shots against a commercial bar
 (Arkanoid: Eternal Battle, Shatter, Geometry Wars 3), tagged defects FRAME-RUINING /
 MAJOR / MINOR, and demanded concrete fixes. All fixes were then applied by a single
-owner (no parallel fan-out — the original repo's data shows split ownership of coupled
-visual systems made things worse). Critics were told to grade against the bar, never
-against improvement, and to call out claimed fixes that didn't land in the pixels.
+owner — no parallel fan-out, because coupled visual systems break under split
+ownership. Critics were told to grade against the bar, never against improvement,
+and to call out claimed fixes that didn't land in the pixels.
 
 ## Scores
 
@@ -58,7 +56,7 @@ wordmark flagged.
 ## Honest assessment
 
 The bar was a modern commercial arcade remake. **It does not fully reach it** — but
-unlike the FPS experiment, it got close enough that the critics started saying "ship."
+it got close enough that the critics started saying "ship."
 
 What still loses the blind A/B, per the final panel:
 
@@ -72,7 +70,7 @@ What still loses the blind A/B, per the final panel:
 ## What the experiment showed
 
 1. **The critic loop converges when the bar is reachable**: 3.8 → 6.0 → 7.3 with no
-   plateau yet, versus the FPS repo's 3.6 → 5.05 stall against an impossible bar.
+   plateau yet. Pick targets where the bar is honestly attainable.
 2. **Critics catch fixes that exist in code but not in pixels** — a 160ms flash no
    still can capture, screen shake "only a diff tool can see," ball stretch nobody
    can perceive. That class of bug is invisible to the author.
@@ -80,7 +78,7 @@ What still loses the blind A/B, per the final panel:
    arena, the HUD critic wanted the pill out of the ball lane; the synthesis (ride
    the multiplier on score popups) was better than either demand.
 4. **Sequential single-owner passes** held up: no round ever broke a previous round's
-   wins, which the original repo could not say about its parallel fan-out rounds.
+   wins.
 
 ## License
 
