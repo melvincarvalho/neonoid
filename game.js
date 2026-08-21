@@ -283,6 +283,7 @@ function brickColor(br) {
 // ---------- game state ----------
 let G = null;
 let mouseX = W / 2, keys = {}, usingMouse = false;
+let TOUCH = matchMedia('(pointer: coarse)').matches;
 
 function newGame(seed, attract) {
   srand(seed);
@@ -613,14 +614,14 @@ function draw() {
     ctx.fillStyle = 'rgba(220,240,255,0.9)';
     ctx.font = '700 17px Verdana, sans-serif';
     ctx.letterSpacing = '2px';
-    ctx.fillText('CLICK OR SPACE TO LAUNCH', W / 2, G.paddle.y - 70);
+    ctx.fillText(TOUCH ? 'TAP TO LAUNCH' : 'CLICK OR SPACE TO LAUNCH', W / 2, G.paddle.y - 70);
     ctx.font = '600 12px Verdana, sans-serif';
     ctx.fillStyle = 'rgba(150,185,215,0.75)';
-    ctx.fillText('MOUSE OR A·D TO MOVE', W / 2, G.paddle.y - 48);
+    ctx.fillText(TOUCH ? 'DRAG TO MOVE' : 'MOUSE OR A·D TO MOVE', W / 2, G.paddle.y - 48);
     ctx.letterSpacing = '0px';
   }
   if (G.state === 'clear') banner(`SECTOR ${String(G.level).padStart(2, '0')} CLEAR`, '#3ae374', '+500 — ADVANCING');
-  if (G.state === 'over' && !G.attract) banner('GAME OVER', '#ff3b5c', `FINAL SCORE ${G.score.toLocaleString('en-US')} — CLICK TO RETRY`);
+  if (G.state === 'over' && !G.attract) banner('GAME OVER', '#ff3b5c', `FINAL SCORE ${G.score.toLocaleString('en-US')} — ${TOUCH ? 'TAP' : 'CLICK'} TO RETRY`);
 
   if (G.showTitle) drawTitle();
 
@@ -1032,29 +1033,59 @@ function drawTitle() {
   ctx.letterSpacing = '3px';
   ctx.fillStyle = '#ffffff';
   ctx.shadowColor = '#33d6ff'; ctx.shadowBlur = 14;
-  ctx.fillText('CLICK TO START', W / 2, 500);
+  ctx.fillText(TOUCH ? 'TAP TO START' : 'CLICK TO START', W / 2, 500);
   ctx.globalAlpha = 1; ctx.shadowBlur = 0;
   ctx.font = '600 13px Verdana, sans-serif';
   ctx.letterSpacing = '3px';
   ctx.fillStyle = 'rgba(140,170,200,0.75)';
-  ctx.fillText('MOUSE — MOVE      SPACE — LAUNCH', W / 2, 640);
+  ctx.fillText(TOUCH ? 'DRAG — MOVE      TAP — LAUNCH' : 'MOUSE — MOVE      SPACE — LAUNCH', W / 2, 640);
   ctx.letterSpacing = '0px';
   ctx.restore();
 }
 
 // ---------- input ----------
-canvas.addEventListener('mousemove', e => {
+// Pointer events cover mouse and touch. Mouse: paddle tracks cursor, click acts.
+// Touch: drag anywhere moves the paddle relatively (finger never covers it),
+// a short tap — or a second finger while dragging — launches / fires.
+const TAP_SLOP = 14, DRAG_GAIN = 1.6;
+let touchId = null, touchLastX = 0, touchMoved = 0;
+
+function canvasX(e) {
   const r = canvas.getBoundingClientRect();
-  mouseX = (e.clientX - r.left) * (W / r.width);
-  usingMouse = true;
-});
-canvas.addEventListener('mousedown', () => {
+  return (e.clientX - r.left) * (W / r.width);
+}
+function action() {
   audio();
   if (G.showTitle) { G.showTitle = false; newGame((Math.random() * 1e9) >>> 0, false); SFX.start(); return; }
   if (G.state === 'over') { newGame((Math.random() * 1e9) >>> 0, false); SFX.start(); return; }
   if (G.state === 'serve') { for (const b of G.balls) if (b.stuck) launchBall(b); G.state = 'play'; G.stateT = 0; return; }
   if (G.state === 'play') { for (const b of G.balls) if (b.stuck) launchBall(b); fireLaser(); }
+}
+canvas.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  if (e.pointerType === 'touch') {
+    TOUCH = true;
+    if (touchId !== null) { action(); return; } // second finger fires while dragging
+    try { canvas.setPointerCapture(e.pointerId); } catch {}
+    touchId = e.pointerId; touchLastX = canvasX(e); touchMoved = 0;
+    if (G && G.paddle) mouseX = G.paddle.x; // sync so the drag starts without a jump
+    audio();
+  } else action();
 });
+canvas.addEventListener('pointermove', e => {
+  if (e.pointerType === 'touch') {
+    if (e.pointerId !== touchId) return;
+    const x = canvasX(e), dx = x - touchLastX;
+    touchLastX = x; touchMoved += Math.abs(dx);
+    mouseX = clamp(mouseX + dx * DRAG_GAIN, 0, W); usingMouse = true;
+  } else { mouseX = canvasX(e); usingMouse = true; }
+});
+canvas.addEventListener('pointerup', e => {
+  if (e.pointerType !== 'touch' || e.pointerId !== touchId) return;
+  touchId = null;
+  if (touchMoved < TAP_SLOP) action();
+});
+canvas.addEventListener('pointercancel', e => { if (e.pointerId === touchId) touchId = null; });
 window.addEventListener('keydown', e => {
   keys[e.key] = true;
   if (e.key === ' ') {
